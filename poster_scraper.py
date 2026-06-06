@@ -1220,6 +1220,7 @@ def get_jellyfin_items(item_type=None, sort_by='name', libraries=None):
             "date_created": item.get('DateCreated', ''),
             "library_id": library_id,
             "library_name": library_names.get(library_id, fallback_library.get('name', '') if fallback_library else ''),
+            "season_count": item.get('ChildCount') if item_type_label == "Series" else None,
             'ProviderIds': item.get('ProviderIds', {})
         }
 
@@ -1244,7 +1245,7 @@ def get_jellyfin_items(item_type=None, sort_by='name', libraries=None):
                     f"{Config.JELLYFIN_URL}/Items"
                     f"?ParentId={library['id']}"
                     f"&IncludeItemTypes={include_types}&Recursive=true"
-                    f"&Fields=Id,Name,ProductionYear,Path,ImageTags,ProviderIds,DateCreated,Type,ParentId,AncestorIds"
+                    f"&Fields=Id,Name,ProductionYear,Path,ImageTags,ProviderIds,DateCreated,Type,ParentId,AncestorIds,ChildCount"
                 )
                 response = requests.get(library_items_url, headers=headers, timeout=15)
                 response.raise_for_status()
@@ -1277,7 +1278,7 @@ def get_jellyfin_items(item_type=None, sort_by='name', libraries=None):
             all_items_url = (
                 f"{Config.JELLYFIN_URL}/Items"
                 f"?IncludeItemTypes=Movie,Series&Recursive=true"
-                f"&Fields=Id,Name,ProductionYear,Path,ImageTags,ProviderIds,DateCreated,Type,ParentId,AncestorIds"
+                f"&Fields=Id,Name,ProductionYear,Path,ImageTags,ProviderIds,DateCreated,Type,ParentId,AncestorIds,ChildCount"
                 f"&SortBy={sort_by_param}&SortOrder={sort_order}"
             )
             response = requests.get(all_items_url, headers=headers, timeout=15)
@@ -1304,7 +1305,7 @@ def get_jellyfin_items(item_type=None, sort_by='name', libraries=None):
                 movies_url = (
                     f"{Config.JELLYFIN_URL}/Items"
                     f"?IncludeItemTypes=Movie&Recursive=true"
-                    f"&Fields=Id,Name,ProductionYear,Path,ImageTags,ProviderIds,DateCreated,ParentId,AncestorIds"
+                    f"&Fields=Id,Name,ProductionYear,Path,ImageTags,ProviderIds,DateCreated,ParentId,AncestorIds,ChildCount"
                     f"&SortBy={sort_by_param}&SortOrder={sort_order}"
                 )
                 response = requests.get(movies_url, headers=headers, timeout=15)
@@ -1318,7 +1319,7 @@ def get_jellyfin_items(item_type=None, sort_by='name', libraries=None):
                 shows_url = (
                     f"{Config.JELLYFIN_URL}/Items"
                     f"?IncludeItemTypes=Series&Recursive=true"
-                    f"&Fields=Id,Name,ProductionYear,Path,ImageTags,ProviderIds,DateCreated,ParentId,AncestorIds"
+                    f"&Fields=Id,Name,ProductionYear,Path,ImageTags,ProviderIds,DateCreated,ParentId,AncestorIds,ChildCount"
                     f"&SortBy={sort_by_param}&SortOrder={sort_order}"
                 )
                 response = requests.get(shows_url, headers=headers, timeout=15)
